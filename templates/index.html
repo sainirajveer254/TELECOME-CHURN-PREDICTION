@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container home">
+    <h1>Welcome to the Telecom Plan Recommendation Portal</h1>
+    <p>Find the best mobile and broadband plans tailored to your needs. Whether you're looking for high-speed internet or affordable mobile data, we've got you covered!</p>
+
+    <div class="button-container">
+        <a href="{{ url_for('recommend') }}">
+            <button class="navigate-btn">📱 Mobile Plan Recommendation</button>
+        </a>
+        <a href="{{ url_for('broadband') }}">
+            <button class="navigate-btn">🌐 Broadband Plan Recommendation</button>
+        </a>
+    </div>
+
+    <div class="features">
+        <h2>Why use this portal?</h2>
+        <ul>
+            <li>🔍 Search plans by price, speed, validity, and more</li>
+            <li>📊 Compare top providers in your region</li>
+            <li>✅ Make informed choices with our recommendation engine</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

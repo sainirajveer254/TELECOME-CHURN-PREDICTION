@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/speed.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- ISP Speed Input Form -->
+    <h2>ISP Speed Comparison</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="pincode">Pincode:</label>
+            <input type="text" name="pincode" id="pincode" placeholder="e.g. 110001">
+        </div>
+        <div class="form-group">
+            <label for="isp">Your ISP:</label>
+            <select name="isp" id="isp">
+                <option value="">-- Select ISP --</option>
+                <option value="Airtel">Airtel</option>
+                <option value="Jio">Jio</option>
+                <option value="BSNL">BSNL</option>
+                <option value="Vodafone">Vodafone</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Check ISP Speed</button>
+    </form>
+
+    {% if message %}
+    <div class="message">{{ message }}</div>
+    {% endif %}
+
+    {% if isp_speeds %}
+        <h3>ISP Speeds (Download & Upload)</h3>
+        <div class="graph-container">
+            <div class="graph-box">
+                <canvas id="downloadSpeedChart"></canvas>
+                <p>Download Speed (Mbps)</p>
+            </div>
+            <div class="graph-box">
+                <canvas id="uploadSpeedChart"></canvas>
+                <p>Upload Speed (Mbps)</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctxDownload = document.getElementById('downloadSpeedChart').getContext('2d');
+    var ctxUpload = document.getElementById('uploadSpeedChart').getContext('2d');
+
+    var downloadSpeedChart = new Chart(ctxDownload, {
+        type: 'bar',
+        data: {
+            labels: ['Airtel', 'Jio', 'BSNL', 'Vodafone'],
+            datasets: [{
+                label: 'Download Speed (Mbps)',
+                data: [{{ isp_speeds.Airtel.download }}, {{ isp_speeds.Jio.download }}, {{ isp_speeds.BSNL.download }}, {{ isp_speeds.Vodafone.download }}],
+                backgroundColor: [
+                    '{{ "red" if best_isp == "Airtel" else "rgba(255, 99, 132, 0.2)" }}',
+                    '{{ "red" if best_isp == "Jio" else "rgba(54, 162, 235, 0.2)" }}',
+                    '{{ "red" if best_isp == "BSNL" else "rgba(75, 192, 192, 0.2)" }}',
+                    '{{ "red" if best_isp == "Vodafone" else "rgba(153, 102, 255, 0.2)" }}'
+                ],
+                borderColor: [
+                    '{{ "darkred" if best_isp == "Airtel" else "rgba(255, 99, 132, 1)" }}',
+                    '{{ "darkred" if best_isp == "Jio" else "rgba(54, 162, 235, 1)" }}',
+                    '{{ "darkred" if best_isp == "BSNL" else "rgba(75, 192, 192, 1)" }}',
+                    '{{ "darkred" if best_isp == "Vodafone" else "rgba(153, 102, 255, 1)" }}'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutBounce'
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 5,
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var uploadSpeedChart = new Chart(ctxUpload, {
+        type: 'bar',
+        data: {
+            labels: ['Airtel', 'Jio', 'BSNL', 'Vodafone'],
+            datasets: [{
+                label: 'Upload Speed (Mbps)',
+                data: [{{ isp_speeds.Airtel.upload }}, {{ isp_speeds.Jio.upload }}, {{ isp_speeds.BSNL.upload }}, {{ isp_speeds.Vodafone.upload }}],
+                backgroundColor: [
+                    '{{ "red" if best_isp == "Airtel" else "rgba(255, 99, 132, 0.2)" }}',
+                    '{{ "red" if best_isp == "Jio" else "rgba(54, 162, 235, 0.2)" }}',
+                    '{{ "red" if best_isp == "BSNL" else "rgba(75, 192, 192, 0.2)" }}',
+                    '{{ "red" if best_isp == "Vodafone" else "rgba(153, 102, 255, 0.2)" }}'
+                ],
+                borderColor: [
+                    '{{ "darkred" if best_isp == "Airtel" else "rgba(255, 99, 132, 1)" }}',
+                    '{{ "darkred" if best_isp == "Jio" else "rgba(54, 162, 235, 1)" }}',
+                    '{{ "darkred" if best_isp == "BSNL" else "rgba(75, 192, 192, 1)" }}',
+                    '{{ "darkred" if best_isp == "Vodafone" else "rgba(153, 102, 255, 1)" }}'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutBounce'
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 5,
+                        font: {
+                            size: 18
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
